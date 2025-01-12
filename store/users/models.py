@@ -58,6 +58,6 @@ class Address(BaseModel):
         ordering = ['province', 'city']
 
     def __str__(self):
-        return f"{self.city}, {self.province} - {self.customer}"
+        return f"{self.city}, {self.province}"
 
 # Create your models here.

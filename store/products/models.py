@@ -73,7 +73,7 @@ class Category(BaseModel):
     name = models.CharField(max_length=150, null=False)
     parent = models.ForeignKey(
         'self', 
-        on_delete=models.SET_NULL, 
+        on_delete=models.CASCADE, 
         blank=True, 
         null=True,
         related_name='subcategories'
@@ -87,4 +87,4 @@ class Category(BaseModel):
     def __str__(self):
         return self.name
 
-# Create your models here.
+

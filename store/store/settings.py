@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'users',
+    'products',
     "safedelete",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -39,9 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'core',
-    "users",
-    'orders',
-    'products',
+    'orders',   
 ]
 
 MIDDLEWARE = [
@@ -86,6 +86,7 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = "users.CustomUser"
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

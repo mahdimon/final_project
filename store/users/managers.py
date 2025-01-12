@@ -3,33 +3,43 @@ from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth import get_user_model
 from safedelete.managers import SafeDeleteManager
 from django.contrib.auth.models import BaseUserManager
-from .models import CustomUser as CU
 
 
-CustomUser:CU = get_user_model()
+SUPERVISOR = 's'
+PRODUCT_MANAGER = 'p'
+OPERATOR = 'o'
+CUSTOMER = 'c'
+ROLE_CHOICES = [
+        (SUPERVISOR, 'Supervisor'),
+        (PRODUCT_MANAGER, 'Product Manager'),
+        (OPERATOR, 'Operator'),
+        (CUSTOMER, 'Customer'),
+    ]
+
 
 class CustomUserManager(SafeDeleteManager, BaseUserManager):
-    def create_user(self, email, phone_number, password=None, role=None, **extra_fields):
-        if role and role not in (x[0] for x in CustomUser.ROLE_CHOICES):
+    def create_user(self, phone_number,email=None,  password=None, role=CUSTOMER, **extra_fields):
+        if role not in (x[0] for x in ROLE_CHOICES):
             raise ValueError("role must be valid or None")
         
-        if not email and role != CustomUser.CUSTOMER:
+        if not email and role != CUSTOMER:
             raise ValueError("The Email field must be set")
         if not phone_number:
             raise ValueError("The Phone Number field must be set")
-        if role != CustomUser.CUSTOMER:
+        if role != CUSTOMER:
             extra_fields.setdefault("is_staff", True)
 
             if extra_fields.get("is_staff") is not True:
                 raise ValueError(" must have is_staff=True.")
 
 
-        user = super().create_user(email=email, password=password, **extra_fields)
+        extra_fields.setdefault("is_active", True)
+        user = self.model(email=self.normalize_email(email), **extra_fields)
+        user.set_password(password)
         user.phone_number = phone_number
         user.role = role
-        user.save()
+        user.save(using=self._db)
         return user
-
     def create_superuser(self, email, phone_number, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
@@ -39,4 +49,4 @@ class CustomUserManager(SafeDeleteManager, BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self.create_user(email=email, phone_number=phone_number, password=password, role=CustomUser.SUPERVISOR, **extra_fields)
+        return self.create_user(email=email, phone_number=phone_number, password=password, role=SUPERVISOR, **extra_fields)

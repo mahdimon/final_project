@@ -42,7 +42,7 @@ class Discount(BaseModel):
 class Product(BaseModel):
     _safedelete_policy = SOFT_DELETE
     
-    image = models.ImageField(upload_to='product_images/')
+    image = models.ImageField(upload_to='product_images/',null=True,blank=True)
     name = models.CharField(max_length=150, null=False)
     brand = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)

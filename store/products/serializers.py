@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product ,Discount
+from .models import Product ,Discount,Category
 
 
 class ProductListSerializer(serializers.ModelSerializer):
@@ -23,4 +23,23 @@ class ProductDetailSerializer(ProductListSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)  
 
     class Meta(ProductListSerializer.Meta): 
-        fields = ProductListSerializer.Meta.fields + ['brand', 'category_name']  
+        fields = ProductListSerializer.Meta.fields + ['brand', 'category_name',"description"]  
+        
+        
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name','parent']
+
+class RecursiveCategorySerializer(serializers.ModelSerializer):
+    subcategories = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'subcategories']
+
+    def get_subcategories(self, obj):
+        if obj.subcategories.exists():
+            return RecursiveCategorySerializer(obj.subcategories.all(), many=True).data
+        return []

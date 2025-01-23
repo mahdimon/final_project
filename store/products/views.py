@@ -14,6 +14,12 @@ class ProductListView(ListAPIView):
     'price': ['exact', 'gte', 'lte'],
     }
     search_fields = ['name'] 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        ordering = self.request.query_params.get('ordering') 
+        if ordering:
+            queryset = queryset.order_by(ordering)
+        return queryset
 
 class ProductDetailView(RetrieveAPIView):
     queryset = Product.objects.filter(stock__gt=0).select_related('category')

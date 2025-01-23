@@ -222,14 +222,48 @@ async function loadCategories() {
         console.error("Error fetching categories:", error);
     }
 }
+async function loadProductDetail() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
 
-// Apply filters when the button is clicked
-document.getElementById('applyFilters').addEventListener('click', () => {
-    loadProducts();
-});
+    if (!productId) {
+        console.error("Product ID not provided in the URL.");
+        return;
+    }
 
-// Load initial data
-document.addEventListener('DOMContentLoaded', () => {
-    loadCategories();
-    loadProducts();
-});
+    try {
+        const response = await axios.get(`${PRODUCT_API_URL}${productId}/`);
+        const product = response.data;
+
+        const productDetail = document.getElementById('productDetail');
+
+        let priceHTML = `<p class="fw-bold">Price: $${product.price}</p>`;
+        if (product.discounted_price && product.discounted_price != product.price) {
+            priceHTML = `
+                <p class="text-muted text-decoration-line-through">Price: $${product.price}</p>
+                <p class="fw-bold text-danger">Discounted Price: $${product.discounted_price}</p>
+            `;
+        }
+
+        productDetail.innerHTML = `
+            <div class="col-md-6">
+                <img src="${product.image}" class="img-fluid" alt="${product.name}">
+            </div>
+            <div class="col-md-6">
+                <h2>${product.name}</h2>
+                ${priceHTML}
+                <p>${product.description || "No description available."}</p>
+                <div id="cartButtonContainer-${product.id}">
+                    <button class="btn btn-primary" onclick="addToCart(${product.id}, ${product.stock}, this)">Add to Cart</button>
+                </div>
+            </div>
+        `;
+
+        // Initialize the cart button UI
+        const cartButtonContainer = document.getElementById(`cartButtonContainer-${product.id}`);
+        updateCartUI(product.id, product.stock, cartButtonContainer);
+    } catch (error) {
+        console.error("Error fetching product detail:", error);
+    }
+}
+

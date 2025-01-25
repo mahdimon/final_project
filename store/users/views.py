@@ -6,8 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.validators import validate_email
 from django.contrib.auth.hashers import make_password
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 from .serializers import CustomTokenObtainPairSerializer
 import random
 from django.core.cache import cache
@@ -36,16 +38,26 @@ class RegisterView(APIView):
         password = request.data.get('password')
 
         if not username or not password or not email:
-            raise ValidationError(
-                "Username, email, and password are required.")
-
+            raise ValidationError("Username, email, and password are required.")
+        
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({"error": "Invalid email address."}, status=status.HTTP_400_BAD_REQUEST)
+        
         if User.objects.filter(username=username).exists():
             return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        
         if User.objects.filter(email=email).exists():
             return Response({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
-        generate_otp(email, username=username,
-                     password=password, register=True)
+        
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+      
+        generate_otp(email, username=username,password=password, register=True)
+        
         return Response({"message": "send the code we emailed you"}, status=status.HTTP_200_OK)
 
 
@@ -53,7 +65,7 @@ class VerifyOTPView(APIView):
     def post(self, request):
         email = request.data.get('email')
         otp = request.data.get('otp')
-
+        
         if not email or not otp:
             raise ValidationError("Email and OTP are required.")
 
@@ -62,12 +74,11 @@ class VerifyOTPView(APIView):
             return Response({"error": "Invalid or expired OTP."}, status=status.HTTP_400_BAD_REQUEST)
         cache.delete(email)
         if cached_value.get("register") == True:
-            user = User.objects.create_user(
+            user = User.objects.create_user(phone_number="0900000000",
                 email=email, password=cached_value["password"], username=cached_value["username"])
         else:
             user = User.objects.get(email=email)
 
-       
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
@@ -77,7 +88,6 @@ class VerifyOTPView(APIView):
             "access": access_token,
             "refresh": refresh_token
         }, status=status.HTTP_201_CREATED)
-
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):

@@ -7,8 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 class ProductListView(ListAPIView):
     queryset = Product.objects.filter(stock__gt=0).select_related('category')
     serializer_class = ProductListSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    # filterset_fields = ['category__id', 'price']  
+    filter_backends = [DjangoFilterBackend, SearchFilter] 
     filterset_fields = {
     'category__id': ['exact', 'in'],
     'price': ['exact', 'gte', 'lte'],

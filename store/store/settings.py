@@ -66,6 +66,7 @@ CACHES = {
         "KEY_PREFIX":"store"
     }
 }
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",

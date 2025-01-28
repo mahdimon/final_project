@@ -1,6 +1,6 @@
 
 from django.db import transaction
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,7 +10,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from .serializers import CustomTokenObtainPairSerializer
 import random
 from django.core.cache import cache
 from datetime import timedelta
@@ -54,7 +53,7 @@ class RegisterView(APIView):
         try:
             validate_password(password)
         except ValidationError as e:
-            return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
       
         generate_otp(email, username=username,password=password, register=True)
         
@@ -63,6 +62,7 @@ class RegisterView(APIView):
 
 class VerifyOTPView(APIView):
     def post(self, request):
+    
         email = request.data.get('email')
         otp = request.data.get('otp')
         
@@ -78,6 +78,8 @@ class VerifyOTPView(APIView):
                 email=email, password=cached_value["password"], username=cached_value["username"])
         else:
             user = User.objects.get(email=email)
+            user.set_password(cached_value["password"])
+            user.save()
 
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -89,6 +91,37 @@ class VerifyOTPView(APIView):
             "refresh": refresh_token
         }, status=status.HTTP_201_CREATED)
 
+        
+ 
+class UserInfoView(APIView):
+    permission_classes = [IsAuthenticated]
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+    def get(self, request):
+        user = request.user
+        return Response({
+            "username": user.username,
+        }) 
+ 
+ 
+class PasswordResetView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        new_password = request.data.get('new_password')
+
+        
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "Email not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError as e:
+            return Response({"error": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+        generate_otp(email, password=new_password)
+
+        return Response({"message": "Proceed to OTP validation."}, status=status.HTTP_200_OK)
+       
+

@@ -12,7 +12,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 import random
 from django.core.cache import cache
-from datetime import timedelta
+from .tasks import send_otp_email
 User = get_user_model()
 
 
@@ -25,6 +25,7 @@ def generate_otp(email, **kwargs):
     # otp_str = str(otp)
     kwargs['otp'] = "0000"
     cache.set(email, kwargs, timeout=300)
+    send_otp_email.delay(email, kwargs['otp'])
 
     return True
 

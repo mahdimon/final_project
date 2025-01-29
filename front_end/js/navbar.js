@@ -21,6 +21,7 @@ async function loadNavbar() {
         const newAccessToken = await refreshAccessToken(refreshToken);
         if (newAccessToken) {
             isAuthenticated = await verifyToken(newAccessToken);
+            accessToken = newAccessToken;
         }
     }
 

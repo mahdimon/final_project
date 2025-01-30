@@ -13,6 +13,9 @@ from django.core.exceptions import ValidationError
 import random
 from django.core.cache import cache
 from .tasks import send_otp_email
+from rest_framework import status, generics
+from .models import Address
+from .serializers import UserProfileSerializer, AddressSerializer
 User = get_user_model()
 
 
@@ -126,3 +129,48 @@ class PasswordResetView(APIView):
         return Response({"message": "Proceed to OTP validation."}, status=status.HTTP_200_OK)
        
 
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        serializer = self.get_serializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Fetch User Addresses
+
+class UserAddressesView(generics.ListCreateAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Address.objects.filter(customer=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(customer=self.request.user)
+
+# Update Address
+class AddressUpdateView(generics.UpdateAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk, *args, **kwargs):
+        try:
+            address = Address.objects.get(id=pk, customer=request.user)
+        except Address.DoesNotExist:
+            return Response({"error": "Address not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(address, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -7,7 +7,7 @@ async function loadNavbar() {
     const navbarLinks = document.getElementById('navbarLinks');
 
     // Check authentication state
-    const accessToken = localStorage.getItem('accessToken');
+    let accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
 
     let username = null;
@@ -33,7 +33,7 @@ async function loadNavbar() {
                 <span class="nav-link">Hi, ${username}</span>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="user-panel.html">User Panel</a>
+                <a class="nav-link" href="dashboard.html">User dashboard</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" id="logoutButton">Logout</a>

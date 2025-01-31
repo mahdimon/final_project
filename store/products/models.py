@@ -67,6 +67,16 @@ class Product(BaseModel):
         verbose_name = "Product"  
         verbose_name_plural = "Products" 
         ordering = ['name'] 
+    
+    def calculate_discounted_price(self):
+        discount :Discount= self.discount
+        if discount:
+            if discount.discount_type == Discount.PERCENTAGE:
+                max_discount = discount.max_discount if discount.max_discount is not None else float('inf')
+                return self.price - min((self.price * discount.value / 100), max_discount)
+            elif discount.discount_type == Discount.FIXED:
+                return self.price - discount.value
+        return self.price
         
 class Category(BaseModel):
     _safedelete_policy = SOFT_DELETE_CASCADE

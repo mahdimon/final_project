@@ -9,6 +9,7 @@ class ProductListView(ListAPIView):
     serializer_class = ProductListSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter] 
     filterset_fields = {
+    'id': ['exact', 'in'],
     'category__id': ['exact', 'in'],
     'price': ['exact', 'gte', 'lte'],
     }

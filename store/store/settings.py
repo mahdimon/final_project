@@ -178,3 +178,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
+
+ZARINPAL_MERCHANT_ID = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+ZARINPAL_WEBSERVICE = "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
+ZARINPAL_STARTPAY_URL = "https://sandbox.zarinpal.com/pg/StartPay/"
+ZARINPAL_CALLBACK_URL = "http://127.0.0.1:5500/verify.html"
+ZARINPAL_VERIFY_URL = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"

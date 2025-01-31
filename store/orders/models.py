@@ -3,6 +3,7 @@ from core.models import BaseModel
 from safedelete.models import SOFT_DELETE, HARD_DELETE, SOFT_DELETE_CASCADE
 from django.contrib.auth import get_user_model
 from products.models import Product
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -30,7 +31,41 @@ class Coupon(BaseModel):
 
     def __str__(self):
         return self.code
+    
+    def is_valid(self):
+        """
+        Checks if the coupon is currently valid based on the valid_from and valid_to dates.
+        """
+        now = timezone.now()
+        if self.valid_to and self.valid_to < now:
+            return False  
+        if self.valid_from and self.valid_from > now:
+            return False  
+        return True
+    
+    def get_discounted_price(self, original_price):
+        """
+        Calculates the discounted price based on the coupon type and original price.
 
+        :param original_price: The initial price before applying the coupon.
+        :return: The final price after applying the discount.
+        """
+
+
+        if self.discount_type == self.PERCENTAGE:
+            discount = (original_price * self.value) / 100  
+        elif self.discount_type == self.FIXED:
+            discount = self.value 
+        else:
+            return original_price  
+
+
+        if self.max_discount is not None:
+            discount = min(discount, self.max_discount)
+
+        final_price = max(original_price - discount, 0)
+
+        return final_price
 
 class Order(BaseModel):
     _safedelete_policy = SOFT_DELETE_CASCADE
@@ -41,7 +76,7 @@ class Order(BaseModel):
     ]
 
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='orders')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=16, decimal_places=2)
     coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, blank=True, null=True, related_name='orders' )
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='P')
     products = models.ManyToManyField(Product,through='OrderProduct',related_name='orders')

@@ -2,8 +2,11 @@ async function loadNavbar() {
     // Fetch and inject the navbar
     const response = await fetch('navbar.html');
     const navbarHTML = await response.text();
+    const existingNavbar = document.getElementById('navbar');
+    if (existingNavbar) {
+      existingNavbar.remove();
+    }
     document.body.insertAdjacentHTML('afterbegin', navbarHTML);
-
     const navbarLinks = document.getElementById('navbarLinks');
 
     // Check authentication state
@@ -23,6 +26,7 @@ async function loadNavbar() {
             isAuthenticated = await verifyToken(newAccessToken);
             accessToken = newAccessToken;
         }
+
     }
 
     // Update navbar based on authentication state
@@ -50,6 +54,9 @@ async function loadNavbar() {
             location.reload();
         });
     } else {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        
         navbarLinks.innerHTML = `
             <li class="nav-item">
                 <a class="nav-link" href="register.html">Register</a>

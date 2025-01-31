@@ -186,7 +186,7 @@ class VerifyPaymentAPIView(APIView):
 
                 )
            
-            cache.delete(f"pending_order_{user.id}")
+            
 
             return Response(
                 {"message": "Payment successful", "ref_id": result["data"]["ref_id"]},

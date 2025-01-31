@@ -4,11 +4,12 @@ from django.conf import settings
 from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 import json
 import requests
-
+from .serializers import OrderHistorySerializer
 from .models import Product, Coupon, Order, OrderProduct
 from users.models import Address
 
@@ -205,3 +206,15 @@ class VerifyPaymentAPIView(APIView):
                 {"error": "Transaction failed", "details": result},
                 status=400
             )
+
+
+
+class OrderHistoryView(ListAPIView):
+    serializer_class = OrderHistorySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).prefetch_related("order_products__product")
+
+    def get_serializer_context(self):
+        return {"request": self.request}  

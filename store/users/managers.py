@@ -1,8 +1,9 @@
 from safedelete.managers import SafeDeleteManager
 from django.contrib.auth.models import BaseUserManager
-from django.contrib.auth import get_user_model
+
 from safedelete.managers import SafeDeleteManager
 from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.models import Group
 
 
 SUPERVISOR = 's'
@@ -38,6 +39,16 @@ class CustomUserManager(SafeDeleteManager, BaseUserManager):
         user.phone_number = phone_number
         user.role = role
         user.save(using=self._db)
+        role_to_group = {
+            SUPERVISOR: "supervisor",
+            PRODUCT_MANAGER: "manager",
+            OPERATOR: "operator",
+        }
+
+        group_name = role_to_group.get(role)
+        if group_name:
+            group, created = Group.objects.get_or_create(name=group_name)
+            user.groups.add(group)
         return user
 
     def create_superuser(self, email, phone_number, password=None, **extra_fields):

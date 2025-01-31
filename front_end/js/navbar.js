@@ -40,6 +40,9 @@ async function loadNavbar() {
                 <a class="nav-link" href="dashboard.html">User dashboard</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="order-history.html">order history</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="#" id="logoutButton">Logout</a>
             </li>
             <li class="nav-item">

@@ -132,4 +132,5 @@ async function getUsername(accessToken) {
 }
 
 // Load navbar on page load
-document.addEventListener('DOMContentLoaded', loadNavbar);
+loadNavbar()
+// document.addEventListener('DOMContentLoaded', loadNavbar);

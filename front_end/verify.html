@@ -46,13 +46,15 @@
         
                 if (response.ok) {
                     document.getElementById("message").innerText = data.message || "Payment successful!";
-                    localStorage.setItem('cart', JSON.stringify(cart));
+                    localStorage.setItem('cart', JSON.stringify({}));
                 } else {
                     document.getElementById("message").innerText = data.error|| "Payment failed!";
                 }
             } catch (error) {
-                document.getElementById("message").innerText = "An error occurred while verifying the payment.";
+                document.getElementById("message").innerText = "An error occurred while verifying the payment: "+`${error}`;
             }
+            document.getElementsByTagName("h1")[0].innerText = "Payment Verification Complete";
+            document.getElementsByTagName("p")[0].innerText = "";
         }
         
         verifyPayment();

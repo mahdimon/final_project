@@ -161,7 +161,7 @@ class VerifyPaymentAPIView(APIView):
         response = requests.post(settings.ZARINPAL_VERIFY_URL, json=payload, headers=headers)
         result = response.json()
      
-
+       
         if result.get("data") and result["data"].get("code") == 100:
             # Payment was successful, finalize the order
             order = Order.objects.create(
@@ -172,7 +172,7 @@ class VerifyPaymentAPIView(APIView):
                 try:
                     coupon = Coupon.objects.get(code=cached_order["coupon_code"])
                     order.coupon = coupon
-                    order.save()
+                    order.save(update_fields=["coupon"])
                 except Coupon.DoesNotExist:
                     pass 
 
@@ -186,22 +186,24 @@ class VerifyPaymentAPIView(APIView):
                     prediscount_price=product.price,  
 
                 )
+                product.stock -= item["quantity"]
+                product.save(update_fields=["stock"])
            
             
 
             return Response(
-                {"message": "Payment successful", "ref_id": result["data"]["ref_id"]},
+                {"message": f'Payment successful ref_id: {result["data"]["ref_id"]}' },
                 status=200
             )
 
         elif result.get("data") and result["data"].get("code") == 101:
             return Response(
-                {"message": "Transaction already submitted"},
+                {"message": f'Transaction already submitted ref_id: {result["data"]["ref_id"]}'},
                 status=200
             )
 
         else:
-            print(result)
+            
             return Response(
                 {"error": "Transaction failed", "details": result},
                 status=400

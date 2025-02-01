@@ -98,4 +98,11 @@ class Category(BaseModel):
     def __str__(self):
         return self.name
 
+class Feature(BaseModel):
+    _safedelete_policy = HARD_DELETE
+    product = models.ForeignKey(Product, related_name="features", on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    value = models.CharField(max_length=255)
 
+    def __str__(self):
+        return f"{self.name}: {self.value} ({self.product.name})"

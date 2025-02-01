@@ -46,7 +46,7 @@
         
                 if (response.ok) {
                     document.getElementById("message").innerText = data.message || "Payment successful!";
-                    localStorage.setItem("cart",{})
+                    localStorage.setItem('cart', JSON.stringify(cart));
                 } else {
                     document.getElementById("message").innerText = data.error|| "Payment failed!";
                 }

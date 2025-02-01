@@ -237,6 +237,7 @@ async function loadProductDetail() {
 
         const productDetail = document.getElementById('productDetail');
 
+        // Handling price and discount display
         let priceHTML = `<p class="fw-bold">Price: $${product.price}</p>`;
         if (product.discounted_price && product.discounted_price != product.price) {
             priceHTML = `
@@ -245,6 +246,18 @@ async function loadProductDetail() {
             `;
         }
 
+        // Generate features list
+        let featuresHTML = `<p>No features available.</p>`;
+        if (product.features && product.features.length > 0) {
+            featuresHTML = `
+                <h5 class="mt-3">Features:</h5>
+                <ul class="list-group">
+                    ${product.features.map(feature => `<li class="list-group-item"><strong>${feature.name}:</strong> ${feature.value}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        // Update product detail UI
         productDetail.innerHTML = `
             <div class="col-md-6">
                 <img src="${product.image}" class="img-fluid" alt="${product.name}">
@@ -253,6 +266,7 @@ async function loadProductDetail() {
                 <h2>${product.name}</h2>
                 ${priceHTML}
                 <p>${product.description || "No description available."}</p>
+                ${featuresHTML}
                 <div id="cartButtonContainer-${product.id}">
                     <button class="btn btn-primary" onclick="addToCart(${product.id}, ${product.stock}, this)">Add to Cart</button>
                 </div>
@@ -266,4 +280,3 @@ async function loadProductDetail() {
         console.error("Error fetching product detail:", error);
     }
 }
-

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product ,Discount,Category
+from .models import Product ,Discount,Category,Feature
 
 
 class ProductListSerializer(serializers.ModelSerializer):
@@ -18,12 +18,17 @@ class ProductListSerializer(serializers.ModelSerializer):
             elif discount.discount_type == Discount.FIXED:
                 return obj.price - discount.value
         return obj.price
-        
+
+class FeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feature
+        fields = ["name", "value"]       
 class ProductDetailSerializer(ProductListSerializer):
-    category_name = serializers.CharField(source='category.name', read_only=True)  
+    category_name = serializers.CharField(source='category.name', read_only=True) 
+    features = FeatureSerializer(many=True) 
 
     class Meta(ProductListSerializer.Meta): 
-        fields = ProductListSerializer.Meta.fields + ['brand', 'category_name',"description"]  
+        fields = ProductListSerializer.Meta.fields + ['brand', 'category_name',"description","features"]  
         
         
 

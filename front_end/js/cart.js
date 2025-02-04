@@ -1,6 +1,6 @@
-const CART_API_URL = "http://127.0.0.1:8000/api/products/";
-const CHECKOUT_URL = "http://127.0.0.1:8000/checkout/";
-const LOGIN_URL = "http://127.0.0.1:8000/login/";
+const CART_API_URL = "/api/products/";
+const CHECKOUT_URL = "/checkout/";
+const LOGIN_URL = "/login/";
 
 // Get cart from localStorage
 function getCart() {

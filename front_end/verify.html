@@ -33,7 +33,7 @@
             }
         
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/order/verify/?Authority=${authority}&Status=${status}`, {
+                const response = await fetch(`/api/order/verify/?Authority=${authority}&Status=${status}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,

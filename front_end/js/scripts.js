@@ -1,5 +1,5 @@
-const CATEGORY_API_URL = "http://127.0.0.1:8000/api/products/categories/";
-const PRODUCT_API_URL = "http://127.0.0.1:8000/api/products/";
+const CATEGORY_API_URL = "/api/products/categories/";
+const PRODUCT_API_URL = "/api/products/";
 
 let selectedCategoryId = null; // Track selected category
 let categories = []; // Store all categories for filtering

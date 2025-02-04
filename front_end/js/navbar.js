@@ -76,7 +76,7 @@ async function loadNavbar() {
 
 async function verifyToken(token) {
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/user/verify/', {
+        const response = await fetch('/api/user/verify/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ async function verifyToken(token) {
 
 async function refreshAccessToken(refreshToken) {
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/user/refresh/', {
+        const response = await fetch('/api/user/refresh/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ async function refreshAccessToken(refreshToken) {
 
 async function getUsername(accessToken) {
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/user/user-info/', {
+        const response = await fetch('/api/user/user-info/', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,

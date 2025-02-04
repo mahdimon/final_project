@@ -1,4 +1,4 @@
-const REGISTER_API_URL = "http://127.0.0.1:8000/api/user/register/";
+const REGISTER_API_URL = "/api/user/register/";
 
 document.getElementById('registerForm').addEventListener('submit', async (event) => {
     event.preventDefault();

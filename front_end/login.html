@@ -45,7 +45,7 @@
 
             try {
                 // Send login request to the backend
-                const response = await axios.post('http://127.0.0.1:8000/api/user/login/', {
+                const response = await axios.post('/api/user/login/', {
                     username: username,
                     password: password
                 });

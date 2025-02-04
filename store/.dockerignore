@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__
+*.py[cod]
+*$py.class
+
+# Virtual environment directories
+venv
+env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment variables (if managed locally; often these are excluded by design)
+# .env
+
+# Node modules (if building front-end assets and you don't need these in the image)
+front_end/node_modules
+
+# Git repository files
+.git
+.gitignore
+
+# Logs and temporary files
+*.log
+tmp/

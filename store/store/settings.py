@@ -64,7 +64,7 @@ REST_FRAMEWORK = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
@@ -149,7 +149,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
+STATIC_ROOT = BASE_DIR / 'static'
 STATIC_URL = "static/"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -161,12 +161,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:80", 
+    "http://localhost",
+    "http://127.0.0.1",
 ]
 
 # Celery Configuration
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_BROKER_URL = 'redis://localhost:6379/0' 
+CELERY_BROKER_URL = 'redis://redis:6379/0' 
 CELERY_ACCEPT_CONTENT = ['json']              
 CELERY_TASK_SERIALIZER = 'json'             
 
@@ -178,9 +179,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
-
+#zarinpal data
 ZARINPAL_MERCHANT_ID = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 ZARINPAL_WEBSERVICE = "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
 ZARINPAL_STARTPAY_URL = "https://sandbox.zarinpal.com/pg/StartPay/"
-ZARINPAL_CALLBACK_URL = "http://127.0.0.1:5500/verify.html"
+ZARINPAL_CALLBACK_URL = "http://127.0.0.1:80/verify.html"
 ZARINPAL_VERIFY_URL = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"

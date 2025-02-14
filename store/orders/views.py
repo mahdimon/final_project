@@ -95,7 +95,7 @@ class CheckoutView(APIView):
 
         data = {
             "merchant_id": settings.ZARINPAL_MERCHANT_ID,
-            "amount": int(discounted_price),  # Convert to int (ZarinPal requires Toman, not Decimal)
+            "amount": int(discounted_price), 
             "callback_url": settings.ZARINPAL_CALLBACK_URL,
             "description": "Online store purchase",
             "currency" : "IRT"

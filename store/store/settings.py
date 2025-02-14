@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from urllib.parse import urljoin
 
 # Load environment variables from .env file
 load_dotenv()
@@ -30,8 +31,11 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = []
+SERVER_IP = os.getenv('SERVER_IP', 'http://127.0.0.1')
 
+
+ALLOWED_HOSTS = [SERVER_IP,]
+print(SERVER_IP)
 
 # Application definition
 
@@ -173,6 +177,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
     "http://127.0.0.1",
+    SERVER_IP,
 ]
 
 # Celery Configuration
@@ -190,8 +195,11 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
 #zarinpal data
+
+
+ZARINPAL_CALLBACK_URL = urljoin(SERVER_IP.rstrip('/') + '/', 'verify.html')
 ZARINPAL_MERCHANT_ID = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 ZARINPAL_WEBSERVICE = "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
 ZARINPAL_STARTPAY_URL = "https://sandbox.zarinpal.com/pg/StartPay/"
-ZARINPAL_CALLBACK_URL = "http://127.0.0.1:80/verify.html"
+
 ZARINPAL_VERIFY_URL = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"

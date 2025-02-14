@@ -5,6 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: django_backend
+    # command: >
+    #   sh -c "gunicorn --bind 0.0.0.0:8000 store.wsgi:application &&
+    #   celery -A store worker --loglevel=info"
     command: gunicorn --bind 0.0.0.0:8000 store.wsgi:application
     volumes:
       - .:/app
@@ -14,6 +17,8 @@ services:
       - redis
     env_file:
       - .env
+    environment:
+      - SERVER_IP=127.0.0.1
     networks:
       - app-network
 
@@ -33,6 +38,7 @@ services:
 
   redis:
     image: redis:6-alpine
+    
     container_name: redis
     ports:
       - "6379:6379"
@@ -45,6 +51,7 @@ services:
       context: ../front_end
       dockerfile: Dockerfile
     container_name: front_docker
+   
     volumes:
       - ../front_end:/app
     ports:

@@ -87,7 +87,6 @@ This project is a full-stack e-commerce store built with Django and Django Rest 
 6. **Start Redis Server:**
    ```bash
    redis-server
-   Start the Celery Worker:
 
 7. **Start the Celery Worker:**
    ```bash
